@@ -52,54 +52,93 @@
 //   });
 // });
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+// import { render, screen, waitFor } from '@testing-library/react';
+// import userEvent from '@testing-library/user-event';
+// import '@testing-library/jest-dom';
+// import SearchBar from '../Components/SearchBar'; // SearchBar-komponenten
+
+// describe('SearchBar', () => {
+//   it('renders input and button', () => {
+//     render(<SearchBar onSearch={vi.fn()} onAddFavorite={vi.fn()} />);
+    
+//     // Kontrollera att input-fältet och knappen renderas
+//     expect(screen.getByPlaceholderText('Skriv ett ord...')).toBeInTheDocument();
+//     expect(screen.getByText('Sök')).toBeInTheDocument();
+//   });
+
+//   it('shows error message if search query is empty', async () => {
+//     render(<SearchBar onSearch={vi.fn()} onAddFavorite={vi.fn()} />);
+    
+//     userEvent.click(screen.getByText('Sök')); // Klicka på sökknappen utan input
+    
+//     // Kontrollera att felmeddelandet visas
+//     expect(await screen.findByText('Sökfältet kan inte vara tomt.')).toBeInTheDocument();
+//   });
+
+//   it('calls onSearch with the correct query when input is provided', async () => {
+//     const mockOnSearch = vi.fn(); // Mocka onSearch-funktionen
+
+//     render(<SearchBar onSearch={mockOnSearch} onAddFavorite={vi.fn()} />);
+    
+//     const input = screen.getByPlaceholderText('Skriv ett ord...');
+    
+//     // Skriv in "test" i input-fältet
+//     userEvent.type(input, 'test');
+    
+//     // Kontrollera att input-fältet har rätt värde
+//     await waitFor(() => {
+//       expect(input).toHaveValue('test');
+//     });
+
+//     // Klicka på sökknappen
+//     userEvent.click(screen.getByText('Sök'));
+
+//     // Kontrollera att onSearch anropas med rätt argument
+//     await waitFor(() => {
+//       expect(mockOnSearch).toHaveBeenCalledWith('test');
+//     });
+
+//     // Kontrollera att onSearch anropas exakt en gång
+//     expect(mockOnSearch).toHaveBeenCalledTimes(1);
+//   });
+// });
+
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import SearchBar from '../Components/SearchBar'; // SearchBar-komponenten
+import SearchBar from '../Components/SearchBar'; // Din komponent
 
 describe('SearchBar', () => {
   it('renders input and button', () => {
-    render(<SearchBar onSearch={vi.fn()} onAddFavorite={vi.fn()} />);
-    
-    // Kontrollera att input-fältet och knappen renderas
+    render(<SearchBar onSearch={vi.fn()} />);
     expect(screen.getByPlaceholderText('Skriv ett ord...')).toBeInTheDocument();
     expect(screen.getByText('Sök')).toBeInTheDocument();
   });
 
   it('shows error message if search query is empty', async () => {
-    render(<SearchBar onSearch={vi.fn()} onAddFavorite={vi.fn()} />);
-    
+    render(<SearchBar onSearch={vi.fn()} />);
     userEvent.click(screen.getByText('Sök')); // Klicka på sökknappen utan input
-    
-    // Kontrollera att felmeddelandet visas
     expect(await screen.findByText('Sökfältet kan inte vara tomt.')).toBeInTheDocument();
   });
 
-  it('calls onSearch with the correct query when input is provided', async () => {
-    const mockOnSearch = vi.fn(); // Mocka onSearch-funktionen
+  it('calls onSearch with the correct query', async () => {
+    const onSearch = vi.fn(); // Mocka sökningen
 
-    render(<SearchBar onSearch={mockOnSearch} onAddFavorite={vi.fn()} />);
+    render(<SearchBar onSearch={onSearch} />);
     
     const input = screen.getByPlaceholderText('Skriv ett ord...');
-    
-    // Skriv in "test" i input-fältet
-    userEvent.type(input, 'test');
-    
-    // Kontrollera att input-fältet har rätt värde
+    userEvent.type(input, 'test'); // Skriv in "test" i input-fältet
+
     await waitFor(() => {
-      expect(input).toHaveValue('test');
+      expect(input).toHaveValue('test'); // Kontrollera att input-fältet har rätt värde
     });
 
-    // Klicka på sökknappen
-    userEvent.click(screen.getByText('Sök'));
+    userEvent.click(screen.getByText('Sök')); // Klicka på Sök-knappen
 
-    // Kontrollera att onSearch anropas med rätt argument
+    // Verifiera att onSearch anropades med rätt argument
     await waitFor(() => {
-      expect(mockOnSearch).toHaveBeenCalledWith('test');
+      expect(onSearch).toHaveBeenCalledWith('test');
     });
-
-    // Kontrollera att onSearch anropas exakt en gång
-    expect(mockOnSearch).toHaveBeenCalledTimes(1);
   });
 });
 
