@@ -12,52 +12,6 @@
 // afterEach(() => server.resetHandlers());
 // afterAll(() => server.close());
 
-// describe("App integration test", () => {
-//   it("renders the search bar and button", () => {
-//     render(<App />);
-//     expect(screen.getByPlaceholderText("Skriv ett ord...")).toBeInTheDocument();
-//     expect(screen.getByText("Sök")).toBeInTheDocument();
-//   });
-
-//   it("visa error om sökfält är tomt", async () => {
-//     render(<App />);
-//     userEvent.click(screen.getByText("Sök"));
-//     expect(
-//       await screen.findByText("Sökfältet kan inte vara tomt.")
-//     ).toBeInTheDocument();
-//   });
-
-//   it("fetches and displays mock data when a word is searched", async () => {
-//     render(<App />);
-
-//     const input = screen.getByPlaceholderText("Skriv ett ord...");
-//     userEvent.type(input, "test"); // Skriv in "test" i input-fältet
-
-//     await waitFor(() => {
-//       expect(input).toHaveValue("test"); // Kontrollera att input-fältet har rätt värde
-//     });
-
-//     userEvent.click(screen.getByText("Sök"));
-
-//     // Vänta tills mock-API-svaret har returnerats och verifiera det
-//     expect(await screen.findByText("A challenge, trial.")).toBeInTheDocument();
-
-//     // fler expects och kolla så att ljud har rätt src
-//   });
-// });
-
-// it("om ordet inte finns", async () => {
-//   render(<App />);
-
-//   const input = screen.getByPlaceholderText("Skriv ett ord...");
-//   await userEvent.type(input, "asdfg");
-//   await userEvent.click(screen.getByText("Sök"));
-
-//   expect(
-//     await screen.findByText("Inga resultat hittades.")
-//   ).toBeInTheDocument();
-// });
-
 // describe("Favorites funktionalitet", () => {
 //   it("lägg till och ta bort", async () => {
 //     render(<App />);
@@ -192,9 +146,55 @@
 //     expect(screen.getByText("Ta bort")).toBeInTheDocument();
 //   });
 // });
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import App from "../App"; // Justera importvägen efter behov
+import App from "../App";
+
+describe("App integration test", () => {
+  it("renders the search bar and button", () => {
+    render(<App />);
+    expect(screen.getByPlaceholderText("Skriv ett ord...")).toBeInTheDocument();
+    expect(screen.getByText("Sök")).toBeInTheDocument();
+  });
+
+  it("visa error om sökfält är tomt", async () => {
+    render(<App />);
+    userEvent.click(screen.getByText("Sök"));
+    expect(
+      await screen.findByText("Sökfältet kan inte vara tomt.")
+    ).toBeInTheDocument();
+  });
+
+  it("fetches and displays mock data when a word is searched", async () => {
+    render(<App />);
+
+    const input = screen.getByPlaceholderText("Skriv ett ord...");
+    userEvent.type(input, "test"); // Skriv in "test" i input-fältet
+
+    await waitFor(() => {
+      expect(input).toHaveValue("test"); // Kontrollera att input-fältet har rätt värde
+    });
+
+    userEvent.click(screen.getByText("Sök"));
+
+    // Vänta tills mock-API-svaret har returnerats och verifiera det
+    expect(await screen.findByText("A challenge, trial.")).toBeInTheDocument();
+
+    // fler expects och kolla så att ljud har rätt src
+  });
+});
+
+it("om ordet inte finns", async () => {
+  render(<App />);
+
+  const input = screen.getByPlaceholderText("Skriv ett ord...");
+  await userEvent.type(input, "asdfg");
+  await userEvent.click(screen.getByText("Sök"));
+
+  expect(
+    await screen.findByText("Inga resultat hittades.")
+  ).toBeInTheDocument();
+});
 
 describe("Favorite Component", () => {
   it("renderas favvisen i favislistan", async () => {
