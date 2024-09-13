@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { WordData, Meaning, Definition } from '../types/typesDefs';
+import React from "react";
+import { WordData, Meaning, Definition } from "../types/typesDefs";
 
 interface ResultDisplayProps {
   result: WordData[] | null;
@@ -8,7 +7,11 @@ interface ResultDisplayProps {
   onAddFavorite: (word: string, definition: string) => void;
 }
 
-const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onPlayAudio, onAddFavorite }) => {
+const ResultDisplay: React.FC<ResultDisplayProps> = ({
+  result,
+  onPlayAudio,
+  onAddFavorite,
+}) => {
   if (!result || result.length === 0) return null;
 
   const word = result[0].word;
@@ -16,7 +19,8 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onPlayAudio, onAd
   const phonetics = result[0].phonetics;
 
   const handleAddToFavorites = () => {
-    const definition = meanings[0]?.definitions[0]?.definition || 'No definition found';
+    const definition =
+      meanings[0]?.definitions[0]?.definition || "No definition found";
     onAddFavorite(word, definition);
   };
 
@@ -34,7 +38,9 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onPlayAudio, onAd
         </div>
       ))}
       {phonetics.length > 0 && phonetics[0].audio && (
-        <button onClick={() => onPlayAudio(phonetics[0].audio)}>Spela upp ljud</button>
+        <button onClick={() => onPlayAudio(phonetics[0].audio)}>
+          Spela upp ljud
+        </button>
       )}
       <button onClick={handleAddToFavorites}>Lägg till i favoriter</button>
     </div>
@@ -42,4 +48,3 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result, onPlayAudio, onAd
 };
 
 export default ResultDisplay;
-
