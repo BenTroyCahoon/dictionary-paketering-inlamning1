@@ -12,83 +12,52 @@
 // afterEach(() => server.resetHandlers());
 // afterAll(() => server.close());
 
-// describe("Favorites funktionalitet", () => {
-//   it("lägg till och ta bort", async () => {
+// describe("App integration test", () => {
+//   it("renders the search bar and button", () => {
 //     render(<App />);
+//     expect(screen.getByPlaceholderText("Skriv ett ord...")).toBeInTheDocument();
+//     expect(screen.getByText("Sök")).toBeInTheDocument();
+//   });
 
-//     const searchInput = screen.getByPlaceholderText("Skriv ett ord...");
-//     await userEvent.type(searchInput, "test");
-
-//     await userEvent.click(screen.getByText("Sök"));
-
-//     // Vänta tills resultatet visas och kontrollera att ordet "test" har hämtats
-//     const addButton = await screen.findByText("Lägg till i favoriter");
-//     expect(addButton).toBeInTheDocument();
-
-//     await userEvent.click(addButton);
-
-//     const Favorites = screen.getByLabelText("Favorites");
-
+//   it("visa error om sökfält är tomt", async () => {
+//     render(<App />);
+//     userEvent.click(screen.getByText("Sök"));
 //     expect(
-//       within(Favorites).getByText("test: A challenge, trial.")
-//     ).not.toBeInTheDocument();
-
-//     const removeButton = screen.getByText("Ta bort");
-//     await userEvent.click(removeButton);
-
-//     expect(
-//       within(Favorites).getByText("test: A challenge, trial.")
+//       await screen.findByText("Sökfältet kan inte vara tomt.")
 //     ).toBeInTheDocument();
 //   });
-// });
 
-// describe("Favorite Component", () => {
-//   it("rendera favoriter i favoritlistan", async () => {
+//   it("fetches and displays mock data when a word is searched", async () => {
 //     render(<App />);
 
-//     const searchInput = screen.getByPlaceholderText("Skriv ett ord...");
-//     const searchButton = screen.getByText("Sök");
+//     const input = screen.getByPlaceholderText("Skriv ett ord...");
+//     userEvent.type(input, "test"); // Skriv in "test" i input-fältet
 
-//     await userEvent.type(searchInput, "test");
-//     await userEvent.click(searchButton);
+//     await waitFor(() => {
+//       expect(input).toHaveValue("test"); // Kontrollera att input-fältet har rätt värde
+//     });
 
-//     expect(await screen.findByText("test")).toBeInTheDocument();
+//     userEvent.click(screen.getByText("Sök"));
 
-//     const addToFavoritesButton = screen.getByText("Lägg till i favoriter");
-//     expect(addToFavoritesButton).toBeInTheDocument();
+//     // Vänta tills mock-API-svaret har returnerats och verifiera det
+//     expect(await screen.findByText("A challenge, trial.")).toBeInTheDocument();
 
-//     await userEvent.click(addToFavoritesButton);
-
-//     const Favorites = screen.getByLabelText("Favorites");
-
-//     expect(within(Favorites).getByText("test")).toBeInTheDocument();
-
-//     const removeButton = screen.getByText("Ta bort");
-//     await userEvent.click(removeButton);
-
-//     expect(within(Favorites).getByText("test")).not.toBeInTheDocument();
+//     // fler expects och kolla så att ljud har rätt src
 //   });
-
-//   it("testa knappen för att lägga till i favoritlistan", async () => {
-//     render(<App />);
-
-//     const searchInput = screen.getByPlaceholderText("Skriv ett ord...");
-//     const searchButton = screen.getByText("Sök");
-
-//     await userEvent.type(searchInput, "test");
-//     await userEvent.click(searchButton);
-
-//     expect(await screen.findByText("test")).toBeInTheDocument();
-
-//     const addToFavoritesButton = screen.getByText("Lägg till i favoriter");
-//     expect(addToFavoritesButton).toBeInTheDocument();
-
-//     await userEvent.click(addToFavoritesButton);
-//     expect(screen.getByText("Ta bort")).toBeInTheDocument();
-//   });
-
-//   //tas ordet bort när man tar bort?
 // });
+
+// it("om ordet inte finns", async () => {
+//   render(<App />);
+
+//   const input = screen.getByPlaceholderText("Skriv ett ord...");
+//   await userEvent.type(input, "asdfg");
+//   await userEvent.click(screen.getByText("Sök"));
+
+//   expect(
+//     await screen.findByText("Inga resultat hittades.")
+//   ).toBeInTheDocument();
+// });
+
 // describe("Favorite Component", () => {
 //   it("renderas favvisen i favislistan", async () => {
 //     render(<App />);
@@ -96,29 +65,24 @@
 //     const searchInput = screen.getByPlaceholderText("Skriv ett ord...");
 //     const searchButton = screen.getByText("Sök");
 
-//     // Sök efter ordet "test"
 //     await userEvent.type(searchInput, "test");
 //     await userEvent.click(searchButton);
 
-//     // Kontrollera att "test" visas efter sökning
+//     // Vänta tills texten "test" är i dokumentet
 //     expect(await screen.findByText("test")).toBeInTheDocument();
 
-//     // Kontrollera att knappen "Lägg till i favoriter" visas
 //     const addToFavoritesButton = screen.getByText("Lägg till i favoriter");
 //     expect(addToFavoritesButton).toBeInTheDocument();
 
-//     // Klicka för att lägga till ordet "test" i favoriter
 //     await userEvent.click(addToFavoritesButton);
 
-//     // Kontrollera att ordet har lagts till i favoriter
 //     const Favorites = screen.getByLabelText("Favorites");
-//     expect(within(Favorites).getByText("test")).toBeInTheDocument();
 
-//     // Ta bort första förekomsten av "test"
-//     const removeButtons = within(Favorites).getAllByText("Ta bort");
-//     await userEvent.click(removeButtons[0]); // Klickar på den första "Ta bort"-knappen
+//     // Hämta knappen "Ta bort" genom textinnehåll
+//     const removeButton = screen.getByText("Ta bort");
+//     await userEvent.click(removeButton);
 
-//     // Kontrollera att ordet "test" har tagits bort
+//     // Kontrollera att texten "test" inte längre finns i favoritlistan
 //     expect(within(Favorites).queryByText("test")).not.toBeInTheDocument();
 //   });
 
@@ -128,27 +92,44 @@
 //     const searchInput = screen.getByPlaceholderText("Skriv ett ord...");
 //     const searchButton = screen.getByText("Sök");
 
-//     // Sök efter ordet "test"
 //     await userEvent.type(searchInput, "test");
 //     await userEvent.click(searchButton);
 
-//     // Kontrollera att "test" visas efter sökning
+//     // Vänta tills texten "test" är i dokumentet
 //     expect(await screen.findByText("test")).toBeInTheDocument();
 
-//     // Kontrollera att knappen "Lägg till i favoriter" visas
 //     const addToFavoritesButton = screen.getByText("Lägg till i favoriter");
 //     expect(addToFavoritesButton).toBeInTheDocument();
 
-//     // Klicka för att lägga till ordet "test" i favoriter
 //     await userEvent.click(addToFavoritesButton);
 
-//     // Kontrollera att knappen "Ta bort" visas efter att "test" har lagts till
-//     expect(screen.getByText("Ta bort")).toBeInTheDocument();
+//     // Hämta knappen med texten "Ta bort"
+//     const removeButton = screen.getByText("Ta bort");
+//     expect(removeButton).toBeInTheDocument();
 //   });
 // });
-import { render, screen, within, waitFor } from "@testing-library/react";
+
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import {
+  describe,
+  it,
+  beforeAll,
+  afterEach,
+  afterAll,
+  expect,
+  vi,
+} from "vitest";
 import App from "../App";
+import { handlers } from "../handlers";
+import { setupServer } from "msw/node";
+
+// Setup MSW server
+const server = setupServer(...handlers);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 describe("App integration test", () => {
   it("renders the search bar and button", () => {
@@ -180,20 +161,45 @@ describe("App integration test", () => {
     // Vänta tills mock-API-svaret har returnerats och verifiera det
     expect(await screen.findByText("A challenge, trial.")).toBeInTheDocument();
 
-    // fler expects och kolla så att ljud har rätt src
+    // Testa att ljudknappen finns och har rätt URL
+    const audioButton = screen.getByText("Spela upp ljud");
+    expect(audioButton).toBeInTheDocument();
+
+    // Mocka Audio för att förhindra verklig ljuduppspelning
+    const mockPlay = vi.fn(); // skapar en mock-funktion
+
+    const mockAudio = {
+      play: mockPlay,
+      pause: vi.fn(),
+      src: "",
+      // Lägg till övriga egenskaper som behövs
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      // Du kan även lägga till andra egenskaper om det behövs
+    } as unknown as HTMLAudioElement; // Typa om till HTMLAudioElement
+
+    vi.spyOn(window, "Audio").mockImplementation(() => mockAudio);
+
+    userEvent.click(audioButton);
+
+    await waitFor(() => {
+      expect(mockPlay).toHaveBeenCalled(); // Kontrollera att play har kallats
+    });
+
+    vi.restoreAllMocks(); // Återställ alla mocks
   });
-});
 
-it("om ordet inte finns", async () => {
-  render(<App />);
+  it("om ordet inte finns", async () => {
+    render(<App />);
 
-  const input = screen.getByPlaceholderText("Skriv ett ord...");
-  await userEvent.type(input, "asdfg");
-  await userEvent.click(screen.getByText("Sök"));
+    const input = screen.getByPlaceholderText("Skriv ett ord...");
+    await userEvent.type(input, "asdfg");
+    await userEvent.click(screen.getByText("Sök"));
 
-  expect(
-    await screen.findByText("Inga resultat hittades.")
-  ).toBeInTheDocument();
+    expect(
+      await screen.findByText("Inga resultat hittades.")
+    ).toBeInTheDocument();
+  });
 });
 
 describe("Favorite Component", () => {

@@ -84,17 +84,6 @@ const App: React.FC = () => {
       setSearchError("Inga resultat hittades.");
     }
   };
-  // const handleSearch = async (query: string) => {
-  //   try {
-  //     const data = await fetchWordData(query);
-  //     setResult(data);
-  //     setSearchError(null);
-  //   } catch (error) {
-  //     console.error('Search error:', error);
-  //     setResult(null);
-  //     setSearchError("Sorry pal, we couldn't find definitions for the word you were looking for.");
-  //   }
-  // };
 
   const handleAddFavorite = (word: string, definition: string) => {
     const newFavorite: FavoriteWord = { word, definition };
