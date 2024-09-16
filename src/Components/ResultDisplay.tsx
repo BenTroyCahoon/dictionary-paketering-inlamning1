@@ -5,18 +5,22 @@ interface ResultDisplayProps {
   result: WordData[] | null;
   onPlayAudio: (audioUrl: string) => void;
   onAddFavorite: (word: string, definition: string) => void;
+  isFavorite: (word: string) => boolean;
 }
 
 const ResultDisplay: React.FC<ResultDisplayProps> = ({
   result,
   onPlayAudio,
   onAddFavorite,
+  isFavorite,
 }) => {
   if (!result || result.length === 0) return null;
 
   const word = result[0].word;
   const meanings = result[0].meanings;
   const phonetics = result[0].phonetics;
+
+  if (isFavorite(word)) return null;
 
   const handleAddToFavorites = () => {
     const definition =

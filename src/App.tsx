@@ -1,122 +1,75 @@
-// import React, { useState } from 'react';
-// import { FavoriteWord, WordData } from './types/typesDefs';
-// import SearchBar from './Components/SearchBar';
-// import ResultDisplay from './Components/ResultDisplay';
-// import Favorites from './Components/Favorites';
-// import { fetchWordData } from './APIs/WordsAPI';
-// import ThemeToggle from './Components/ThemeToggle';
-// import './App.css';
-
-// const App: React.FC = () => {
-//   const [result, setResult] = useState<WordData[] | null>(null);
-//   const [favorites, setFavorites] = useState<FavoriteWord[]>(() => {
-//     const savedFavorites = sessionStorage.getItem('favorites');
-//     return savedFavorites ? JSON.parse(savedFavorites) : [];
-//   });
-
-//   const handleSearch = async (query: string) => {
-//     console.log("hej hej hej ")
-//     try {
-//       const data = await fetchWordData(query);
-//       setResult(data);
-//     } catch (error) {
-//       console.error('Search error:', error);
-//       setResult(null);
-//     }
-//   };
-
-//   const handleAddFavorite = (word: string, definition: string) => {
-//     const newFavorite: FavoriteWord = { word, definition };
-//     const updatedFavorites = [...favorites, newFavorite];
-//     setFavorites(updatedFavorites);
-//     sessionStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-//   };
-
-//   const handleRemoveFavorite = (word: string) => {
-//     const updatedFavorites = favorites.filter(fav => fav.word !== word);
-//     setFavorites(updatedFavorites);
-//     sessionStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-//   };
-
-//   const handlePlayAudio = (audioUrl: string) => {
-//     const audio = new Audio(audioUrl);
-//     audio.play();
-//   };
-
-//   return (
-//     <div>
-//       <ThemeToggle />
-//       <SearchBar onSearch={handleSearch} onAddFavorite={handleAddFavorite} />
-//       <ResultDisplay result={result} onPlayAudio={handlePlayAudio} onAddFavorite={handleAddFavorite} />
-//       <Favorites favorites={favorites} onRemoveFavorite={handleRemoveFavorite} />
-
-//     </div>
-//   );
-// };
-
-// export default App;
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FavoriteWord, WordData } from "./types/typesDefs";
 import SearchBar from "./Components/SearchBar";
 import ResultDisplay from "./Components/ResultDisplay";
-import Favorites from "./Components/Favorites";
+import Favorites from "./Components/Favorites"; //
 import { fetchWordData } from "./APIs/WordsAPI";
 import ThemeToggle from "./Components/ThemeToggle";
 import "./App.css";
 
 const App: React.FC = () => {
-  const [result, setResult] = useState<WordData[] | null>(null);
+  const [result, setResult] = useState<WordData[] | null>(null); //lagra sökresultat
   const [favorites, setFavorites] = useState<FavoriteWord[]>(() => {
+    //hämta sparade favoriter från sessionStorage eller  med tom array
     const savedFavorites = sessionStorage.getItem("favorites");
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
-  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null); // lagra felmeddelanden vid sökning
+
+  useEffect(() => {
+    sessionStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   const handleSearch = async (query: string) => {
     try {
-      const data = await fetchWordData(query);
-      setResult(data);
-      setSearchError(null); // ta bortfel vid lyckad sökning
+      const data = await fetchWordData(query); // Hämta data för det angivna ordet
+      setResult(data); // sätt sökresultatet
+      setSearchError(null); // rensa eventuella tidigare felmeddelanden
     } catch (error) {
       console.error("Search error:", error);
-      setResult(null);
-      setSearchError("Inga resultat hittades.");
+      setResult(null); // taborttidigare resultat vid fel
+      setSearchError("Inga resultat hittades."); // sätt felmeddelande
     }
   };
 
   const handleAddFavorite = (word: string, definition: string) => {
-    const newFavorite: FavoriteWord = { word, definition };
-    const updatedFavorites = [...favorites, newFavorite];
-    setFavorites(updatedFavorites);
-    sessionStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    const newFavorite: FavoriteWord = { word, definition }; // skapar ett nytt favoritord
+    const updatedFavorites = [...favorites, newFavorite]; // Lägg till det nya favoritordet till listan
+    setFavorites(updatedFavorites); // uppdatera state med nya favoriter
+    sessionStorage.setItem("favorites", JSON.stringify(updatedFavorites)); // Spara de uppdaterade favoriterna i sessionStorage
   };
 
   const handleRemoveFavorite = (word: string) => {
-    const updatedFavorites = favorites.filter((fav) => fav.word !== word);
+    const updatedFavorites = favorites.filter((fav) => fav.word !== word); // filter bort det ord som ska tas bort
     setFavorites(updatedFavorites);
-    sessionStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    sessionStorage.setItem("favorites", JSON.stringify(updatedFavorites)); // spara de uppdaterade favoriterna i sessionStorage
   };
 
   const handlePlayAudio = (audioUrl: string) => {
-    const audio = new Audio(audioUrl);
-    audio.play();
+    const audio = new Audio(audioUrl); // Skapa ett ljudobjekt med den angivna URL:en
+    audio.play(); // spela upp
+  };
+
+  const isFavorite = (word: string) => {
+    return favorites.some((fav) => fav.word === word);
   };
 
   return (
-    <div>
+    <div className="app-container">
       <ThemeToggle />
-      {/* För vidare eventuella fel från App till SearchBar */}
-      <SearchBar onSearch={handleSearch} />
-      {searchError && <p>{searchError}</p>} {/* Visa eventuella fel här */}
+      <SearchBar onSearch={handleSearch} />{" "}
+      {/* handleSearch som prop till SearchBar */}
+      {searchError && <p>{searchError}</p>}{" "}
+      {/* Visa felmeddelande om det finns något */}
       <ResultDisplay
-        result={result}
-        onPlayAudio={handlePlayAudio}
-        onAddFavorite={handleAddFavorite}
+        result={result} // Skicka resultatet till ResultDisplay
+        onPlayAudio={handlePlayAudio} // Skicka handlePlayAudio som prop till ResultDisplay
+        onAddFavorite={handleAddFavorite} // Skicka handleAddFavorite som prop till ResultDisplay
+        isFavorite={isFavorite}
       />
       <Favorites
-        favorites={favorites}
-        onRemoveFavorite={handleRemoveFavorite}
+        favorites={favorites} // Skicka favoriter till Favorites
+        onRemoveFavorite={handleRemoveFavorite} // Skicka handleRemoveFavorite som prop till Favorites
       />
     </div>
   );
