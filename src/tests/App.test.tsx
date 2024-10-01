@@ -92,7 +92,7 @@ describe("App integration test", () => {
 });
 
 describe("Favorite Component", () => {
-  it("renderas favvisen i favislistan", async () => {
+  it("lägger till ett ord i favoriter och tar bort det", async () => {
     render(<App />);
 
     const searchInput = screen.getByPlaceholderText("Skriv ett ord...");
